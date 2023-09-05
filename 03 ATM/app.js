@@ -20,7 +20,7 @@ async function mainFunc() {
             message: "Enter your id: ",
         },
         {
-            type: "number",
+            type: "password",
             name: "userPin",
             message: "Enter your pin: ",
         },
@@ -57,6 +57,12 @@ async function mainFunc() {
             },
         },
     ]);
+    async function start() {
+        let title = chalkAnimation.rainbow("Your transaction is being processed");
+        await sleep();
+        title.stop();
+    }
+    await start();
     if (answers.userId && answers.userPin) {
         const balance = 50000;
         console.log("your previous account balance was ", balance);
@@ -70,4 +76,59 @@ async function mainFunc() {
         }
     }
 }
-mainFunc();
+async function checker() {
+    let cred = await inquirer.prompt([
+        {
+            type: "list",
+            name: "form",
+            message: "Are you new user ?",
+            choices: ["New user", "Already have a account"],
+        },
+        {
+            type: "input",
+            name: "newid",
+            message: "Enter your new Id",
+            when(cred) {
+                return (cred.form == "New user" ||
+                    cred.form == "Already have a account");
+            },
+        },
+        {
+            type: "input",
+            name: "newPwd",
+            message: "Enter your new Password",
+            when(cred) {
+                return cred.form == ("New user" || "Already have a account");
+            },
+        },
+    ]);
+    let a = cred.newid;
+    let b = cred.newPwd;
+    let credArray = [a, b];
+    async function login() {
+        return new Promise((resolve, reject) => {
+            if (a && b) {
+                resolve({
+                    success: true,
+                    message: "succesful login",
+                });
+            }
+            else {
+                reject({
+                    success: false,
+                    message: "login failed",
+                });
+            }
+        });
+    }
+    try {
+        const result = await login();
+        if (result.success) {
+            mainFunc();
+        }
+    }
+    catch (error) {
+        console.log("login failed");
+    }
+}
+checker();
