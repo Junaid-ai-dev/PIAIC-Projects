@@ -20,6 +20,7 @@ async function start() {
 await start();
 
 async function mainFunc() {
+	
 	let answers = await inquirer.prompt([
 		{
 			type: "input",
